@@ -1,4 +1,4 @@
-version: '3'
+#version: '3'
 
 services:
   source_postgres:
@@ -6,11 +6,18 @@ services:
     ports:
       - "5433:5432"
     networks:
-      - elt_network
+      - fashion_network
     environment:
       POSTGRES_DB: source_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: secret
     volumes:
       - ./source_db_init/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+
+networks:
+  fashion_network:
+    driver: bridge
+
+    
 
