@@ -1,0 +1,5 @@
+azure_client_id =''
+azure_tenant_id =''
+azure_client_secret=''
+azure_vault_url=''
+azure_storage_url='https://fashionblobstorage.blob.core.windows.net/'
