@@ -4,7 +4,7 @@ CREATE TABLE Products (
     Descript VARCHAR(800)
 );
 
-CREATE TABLE product_images (
+CREATE TABLE product_characteristics (
     id SERIAL PRIMARY KEY,
     Brand_id INTEGER REFERENCES Products(Brand_Prod_id),
     Brand VARCHAR(50),
