@@ -135,6 +135,8 @@ def gucci(category_url,n_products):
 #EXECUTE !!!!!
 url = 'https://www.gucci.com/it/it/ca/women/ready-to-wear-for-women-c-women-readytowear'
 
+try:
+    gucci(url,3)
 
-
-gucci(url,3)
+except Exception as error:
+    print(f"Error: {error}")
