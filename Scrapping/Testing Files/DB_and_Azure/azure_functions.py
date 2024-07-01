@@ -1,5 +1,5 @@
 from azure.storage.blob import BlobServiceClient
-from azure_key import account_name, account_key, container_name
+#from azure_key import account_name, account_key, container_name
 from io import BytesIO
 
 class azure_functions:
@@ -8,6 +8,10 @@ class azure_functions:
         pass
 
     def connect_blob():
+
+        account_name = 'fashionblobstorage'
+        account_key = 'ZjPPzXD1yE+D1E3YQTDvi6ZQmB8NJINlaQeiuokjW1XQbmB/8JxS/OfZp8Bd/8M4UikJvV1a+7jg+ASt5+J8Mg=='
+        container_name ='imgs'
 
         connect_str = 'DefaultEndpointsProtocol=https;AccountName='+account_name+';AccountKey='+account_key+';EndpointSuffix=core.windows.net'
 
@@ -30,6 +34,9 @@ class azure_functions:
             container_client.upload_blob(name= image_name,data=img_byte_arr )
         except Exception as error:
             print(f"Error: {error}")
+
+
+
     
 
 

@@ -1,29 +1,22 @@
 #pip install psycopg2-binary
 import psycopg2
-from sql_key import dbname, user, password, host, port
+#from sql_key import dbname, user, password, host, port
 
 class sql_db_functions:
 
     def __init__(self):
         pass
 
-    # Database connection parameters
-    conn_params = {
-        'dbname': dbname[0],
-        'user': user[0],
-        'password': password[0],
-        'host': host[0],
-        'port': port
-    }
 
     def connect_sql():
+        
         # Database connection parameters
         conn_params = {
-            'dbname': dbname[0],
-            'user': user[0],
-            'password': password[0],
-            'host': host[0],
-            'port': port
+            'dbname': 'source_db',
+            'user': 'postgres',
+            'password': 'secret',
+            'host': 'localhost',
+            'port': '5433'
         }
         # Connect to the PostgreSQL server
         conn = psycopg2.connect(**conn_params)
@@ -69,5 +62,5 @@ class sql_db_functions:
         cursor.close()
         conn.close()
 
-
+    
 
