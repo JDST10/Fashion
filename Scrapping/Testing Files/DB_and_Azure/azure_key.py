@@ -2,7 +2,7 @@
 class azure_key:
 
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
     
     def account_name(): 
