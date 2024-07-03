@@ -1,6 +1,5 @@
 #pip install psycopg2-binary
 import psycopg2
-#from sql_key import dbname, user, password, host, port
 
 class sql_db_functions:
 
@@ -26,8 +25,6 @@ class sql_db_functions:
 
     def insert_description_image_to_db(conn, brand, descript, price,image_names):
         try:
-            # Create a new database session and return a new instance of the connection class
-            cursor = conn.cursor()
 
             # Insert a single row into the Products table
             insert_product_query = """
