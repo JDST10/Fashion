@@ -28,10 +28,10 @@ class azure_functions:
 
         try:
             img_byte_arr = BytesIO()
-            image.save(img_byte_arr, format=image.format)
+            image.save(img_byte_arr, format='JPEG')
             img_byte_arr = img_byte_arr.getvalue()
 
-            container_client.upload_blob(name= image_name,data=img_byte_arr )
+            container_client.upload_blob(name= image_name+'.JPEG',data=img_byte_arr )
         except Exception as error:
             print(f"Error: {error}")
 

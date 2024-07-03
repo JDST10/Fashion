@@ -23,7 +23,7 @@ class sql_db_functions:
 
         return conn, cursor
 
-    def insert_description_image_to_db(conn, brand, descript, price,image_names):
+    def insert_description_image_to_db(conn,cursor, brand, descript, price,image_names):
         try:
 
             # Insert a single row into the Products table
