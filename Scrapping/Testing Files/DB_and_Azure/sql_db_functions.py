@@ -24,7 +24,7 @@ class sql_db_functions:
 
         return conn, cursor
 
-    def insert_description_image_to_db(conn,cursor, brand, descript, price,image_names):
+    def insert_description_image_to_db(conn,cursor, brand, descript, price,images_links):
         try:
 
             # Insert a single row into the Products table
@@ -42,10 +42,10 @@ class sql_db_functions:
             
             # Insert rows into the product_img table
             insert_image_query = """
-            INSERT INTO product_img (Brand_id, image_name)
+            INSERT INTO product_img (Brand_id, image_link)
             VALUES (%s, %s);
             """
-            execute_batch(cursor, insert_image_query, [(brand_prod_id, image_name) for image_name in image_names])
+            execute_batch(cursor, insert_image_query, [(brand_prod_id, image_name) for image_name in images_links])
 
 
             # Commit the transaction
