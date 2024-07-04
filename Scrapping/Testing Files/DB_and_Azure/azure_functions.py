@@ -8,20 +8,23 @@ class azure_functions:
         pass
 
     def connect_blob():
+        try:
+            account_name = 'fashionblobstorage'
+            account_key = 'ZjPPzXD1yE+D1E3YQTDvi6ZQmB8NJINlaQeiuokjW1XQbmB/8JxS/OfZp8Bd/8M4UikJvV1a+7jg+ASt5+J8Mg=='
+            container_name ='imgs'
 
-        account_name = 'fashionblobstorage'
-        account_key = 'ZjPPzXD1yE+D1E3YQTDvi6ZQmB8NJINlaQeiuokjW1XQbmB/8JxS/OfZp8Bd/8M4UikJvV1a+7jg+ASt5+J8Mg=='
-        container_name ='imgs'
+            connect_str = 'DefaultEndpointsProtocol=https;AccountName='+account_name+';AccountKey='+account_key+';EndpointSuffix=core.windows.net'
 
-        connect_str = 'DefaultEndpointsProtocol=https;AccountName='+account_name+';AccountKey='+account_key+';EndpointSuffix=core.windows.net'
+            #use the client to connect
+            blob_Service_client = BlobServiceClient.from_connection_string(connect_str)
 
-        #use the client to connect
-        blob_Service_client = BlobServiceClient.from_connection_string(connect_str)
+            #Use the client to connect to the container 
+            container_client = blob_Service_client.get_container_client(container_name)
 
-        #Use the client to connect to the container 
-        container_client = blob_Service_client.get_container_client(container_name)
-
-        return container_client
+            return container_client
+        except Exception as e:
+            print("Failed to connect to Azure Blob Storage")
+            return None
 
 
     def images_to_blob(image, image_name,container_client):
