@@ -1,5 +1,6 @@
 #pip install psycopg2-binary
 import psycopg2
+from psycopg2.extras import execute_batch
 
 class sql_db_functions:
 
@@ -27,6 +28,7 @@ class sql_db_functions:
         try:
 
             # Insert a single row into the Products table
+            print('inserting')
             insert_product_query = """
             INSERT INTO Products (Brand, Descript, Price)
             VALUES (%s, %s, %s) RETURNING Brand_Prod_id;
@@ -36,23 +38,26 @@ class sql_db_functions:
             # Get the generated Brand_Prod_id
             brand_prod_id = cursor.fetchone()[0]
 
+            print(f"Brand_Prod_id generated: {brand_prod_id}")
+            
             # Insert rows into the product_img table
             insert_image_query = """
             INSERT INTO product_img (Brand_id, image_name)
             VALUES (%s, %s);
             """
-            for image_name in image_names:
-                cursor.execute(insert_image_query, (brand_prod_id, image_name))
+            execute_batch(cursor, insert_image_query, [(brand_prod_id, image_name) for image_name in image_names])
+
 
             # Commit the transaction
             conn.commit()
 
-            print("Data inserted successfully")
+            print("Data inserted successfully to DB")
 
-        except Exception as e:
+        except psycopg2.Error as e:
             # Rollback the transaction in case of error
             conn.rollback()
             print("Error occurred:", e)
+            print(f"Error details: {e.pgcode}, {e.pgerror}, {e.diag.message_primary}")
 
     def close_connection_db(cursor,conn):
         #Close the cursor and connection to clean up
