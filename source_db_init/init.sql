@@ -2,7 +2,9 @@ CREATE TABLE Products (
     Brand_Prod_id SERIAL PRIMARY KEY,
     Brand VARCHAR(50),
     Descript VARCHAR(1500),
-    Price FLOAT
+    Price FLOAT,
+    Link VARCHAR(300),
+    Clothing_type VARCHAR(50)
 );
 
 CREATE TABLE product_characteristics (

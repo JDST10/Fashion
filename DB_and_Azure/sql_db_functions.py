@@ -24,16 +24,16 @@ class sql_db_functions:
 
         return conn, cursor
 
-    def insert_description_image_to_db(conn,cursor, brand, descript, price,images_links):
+    def insert_description_image_to_db(conn,cursor, brand, descript, price, prod_link, Clothing_type, images_links):
         try:
 
             # Insert a single row into the Products table
             print('inserting')
             insert_product_query = """
-            INSERT INTO Products (Brand, Descript, Price)
-            VALUES (%s, %s, %s) RETURNING Brand_Prod_id;
+            INSERT INTO Products (Brand, Descript, Price, Link, Clothing_type)
+            VALUES (%s, %s, %s, %s, %s) RETURNING Brand_Prod_id;
             """
-            cursor.execute(insert_product_query, (brand, descript, price))
+            cursor.execute(insert_product_query, (brand, descript, price, prod_link, Clothing_type ))
 
             # Get the generated Brand_Prod_id
             brand_prod_id = cursor.fetchone()[0]
