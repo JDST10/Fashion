@@ -14,19 +14,13 @@ services:
     volumes:
       - ./source_db_init/init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  chroma:
-    image: chromadb/chromadb:latest
+  chroma-db:
+    build: .
     ports:
       - "8080:8080"
-    depends_on:
-      - source_postgres
     environment:
-      CHROMA_DB_HOST: db
-      CHROMA_DB_USER: myuser
-      CHROMA_DB_PASSWORD: mypassword
-      CHROMA_DB_NAME: mydb
-    volumes:
-      - ./chromadata:/app/data
+      - CHROMA_DB_ALLOW_RESET=true
+      - CHROMA_DB_ANONYMIZED_TELEMETRY=false
     networks:
       - fashion_network
 

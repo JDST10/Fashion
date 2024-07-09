@@ -2,11 +2,14 @@ FROM python:3.8-slim
 
 # Install PostgreSQL command-line tools
 RUN apt-get update && apt-get install -y postgresql-client
-RUN pip install chromadb
-
 
 # Expose the port for Chroma
-EXPOSE 8080
+WORKDIR /app
 
-# Define the command to run Chroma
-CMD ["chromadb"]
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt
+
+COPY . .
+
+CMD ["chromadb", "serve", "--host", "0.0.0.0", "--port", "8080"]
