@@ -10,7 +10,7 @@ CREATE TABLE Products (
 CREATE TABLE product_characteristics (
     id SERIAL PRIMARY KEY,
     Brand_id INTEGER REFERENCES Products(Brand_Prod_id),
-    Detail VARCHAR(50)
+    Detail TEXT 
 );
 
 CREATE TABLE product_img (
