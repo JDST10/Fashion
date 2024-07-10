@@ -65,4 +65,3 @@ class sql_db_functions:
         conn.close()
 
     
-

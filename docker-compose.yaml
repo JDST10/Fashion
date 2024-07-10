@@ -14,15 +14,6 @@ services:
     volumes:
       - ./source_db_init/init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  chroma-db:
-    build: .
-    ports:
-      - "8080:8080"
-    environment:
-      - CHROMA_DB_ALLOW_RESET=true
-      - CHROMA_DB_ANONYMIZED_TELEMETRY=false
-    networks:
-      - fashion_network
 
 
 networks:
