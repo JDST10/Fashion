@@ -1,4 +1,4 @@
-#version: '3'
+version: '3'
 
 services:
   source_postgres:
@@ -14,11 +14,16 @@ services:
     volumes:
       - ./source_db_init/init.sql:/docker-entrypoint-initdb.d/init.sql
 
-
+  chroma:
+    image: chromadb/chromadb:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - fashion_network
+    environment:
+      CHROMA_DB_PATH: /data
+      CHROMA_LOG_LEVEL: INFO
 
 networks:
   fashion_network:
     driver: bridge
-
-    
-
