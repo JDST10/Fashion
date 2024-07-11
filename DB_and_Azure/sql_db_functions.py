@@ -24,7 +24,7 @@ class sql_db_functions:
 
         return conn, cursor
 
-    def insert_description_image_to_db(conn,cursor, brand, descript, price, prod_link, Clothing_type, images_links):
+    def insert_description_image_to_db(conn,cursor, brand, descript, price, prod_link, Clothing_type, images_links, Testing):
         try:
 
             # Insert a single row into the Products table
@@ -49,9 +49,11 @@ class sql_db_functions:
 
 
             # Commit the transaction
-            conn.commit()
-
-            print("Data inserted successfully to DB")
+            if Testing:
+                conn.commit()
+                print("Data inserted successfully to DB")
+            else:
+                print('nice')
 
         except psycopg2.Error as e:
             # Rollback the transaction in case of error
