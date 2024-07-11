@@ -49,7 +49,7 @@ class sql_db_functions:
 
 
             # Commit the transaction
-            if Testing:
+            if Testing == False:
                 conn.commit()
                 print("Data inserted successfully to DB")
             else:
