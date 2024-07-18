@@ -6,7 +6,7 @@ from io import BytesIO
 from PIL import Image
 
 from Features import world_constructions as WCf
-from Features import search_from_luxury_brands
+from Features import search_from_luxury_brands as Sf
 
 
 df = WCf.world_construction.init_luxury_gallery()
@@ -49,7 +49,8 @@ selected_index = None
 for index, row in df.iterrows():
     if st.session_state.get(f"select_{index}", False):
         selected_index = index
-        search_from_luxury_brands(df.loc[selected_index],vectorstore )
+
+        entity = Sf.search_from_luxury_brands(df.loc[selected_index],vectorstore )
         break
 
 if selected_index is None:

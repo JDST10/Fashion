@@ -65,15 +65,15 @@ class seacrh_from_luxury_brands:
         os.environ['OPENAI_API_KEY'] = apikey
 
         turbo_llm = ChatOpenAI(
-            temperature=0,
+            temperature=0.2,
             model_name='gpt-3.5-turbo'
         )
 
         system_prompt = (
             "You are a search engine for clothing. "
-            "Use the following pieces of retrieved context to suggest the best peace of clothing "
-            "the question. If you don't know the answer, say that you "
-            "Explain each of the 5 selected options of the context are the best ones in a consice matter"
+            "Use the following retrieved context to find clothing with a similar descriptions. "
+            "the question. If you don't know the answer, say that you. "
+            "Explain each of the 5 selected options of the context are the best ones in a consice matter."
             "\n\n"
             "{context}"
             
@@ -89,9 +89,9 @@ class seacrh_from_luxury_brands:
         question_answer_chain = create_stuff_documents_chain(turbo_llm, prompt)
         rag_chain = create_retrieval_chain(retriever, question_answer_chain)
 
-        query = f"Find piece that could be similar to this description: {description_generalization}"
+        query = f"""Find a similar description to this one: {description_generalization}"""
 
-        response = rag_chain.invoke({"input": query})
+        response = rag_chain.invoke({"input": description_generalization})
         
         return response#["answer"], response["context"]
 

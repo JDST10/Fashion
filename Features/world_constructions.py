@@ -95,7 +95,7 @@ class world_construction:
 
     def init_chroma_db():
 
-        persist_directory = './Chroma/chroma-db-full-description'
+        persist_directory = './Chroma/chroma-retail'
         #os.path.join(os.path.dirname('__file__'), '..', 'Chroma','chroma-db-full-description')
         embedding = Cf.get_embeddings() 
 

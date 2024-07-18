@@ -10,7 +10,21 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: secret
     volumes:
-      - ./source_db_init/in it.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./source_db_init/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+
+  Chroma-db:
+    image: chromadb/chroma:latest
+    ports:
+      - "8000:8000"
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ALLOW_RESET=TRUE
+      - ANONYMIZED_TELEMETRY=${ANONYMIZED_TELEMETRY:-TRUE}
+    volumes:
+      - ../../../Chromadb/chroma-retail:/chroma/chroma
+    networks:
+      - fashion_network
 
 
 networks:
