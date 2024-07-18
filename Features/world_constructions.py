@@ -8,6 +8,9 @@ from langchain.retrievers.multi_vector import MultiVectorRetriever
 from langchain_community.embeddings.sentence_transformer import (
     SentenceTransformerEmbeddings,
 )
+
+import os
+
 import pandas as pd
 
 
@@ -92,7 +95,8 @@ class world_construction:
 
     def init_chroma_db():
 
-        persist_directory = 'chroma-db-full-description'
+        persist_directory = './Chroma/chroma-db-full-description'
+        #os.path.join(os.path.dirname('__file__'), '..', 'Chroma','chroma-db-full-description')
         embedding = Cf.get_embeddings() 
 
         vectorstore = Chroma(

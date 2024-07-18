@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   source_postgres:
     image: postgres:latest
@@ -12,17 +10,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: secret
     volumes:
-      - ./source_db_init/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./source_db_init/in it.sql:/docker-entrypoint-initdb.d/init.sql
 
-  chroma:
-    image: chromadb/chromadb:latest
-    ports:
-      - "8080:8080"
-    networks:
-      - fashion_network
-    environment:
-      CHROMA_DB_PATH: /data
-      CHROMA_LOG_LEVEL: INFO
 
 networks:
   fashion_network:
