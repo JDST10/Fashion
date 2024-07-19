@@ -19,6 +19,7 @@ class seacrh_from_luxury_brands:
     def __init__(self, description,vectorstore):
         self.description = description
         self.vectorstore = vectorstore
+        #self.generalize_description = self.generate_description_generalization()
 
 
     def generate_description_generalization(self):
@@ -27,6 +28,10 @@ class seacrh_from_luxury_brands:
 
         prompt_text = f"""
             use this description of a piece of clothing to create a new generalized description highlighting the most relevant aspects of it.
+            Focus on characteristics like: Fit, Sleeve style, Neckline, Material, Formality, Seasson, Colors, Texture, Transparency, Details and Embellishments, Shape,
+            Length, Collar Style, Sleeve Style, Patterns, Patterns placement, Fluidity of fabric, Fabric weight, Pocket Presence, Pocket placement, 
+            Pocket size, Breathability, Occasion Suitability, Lapel, etc.
+
             Description: {description}
 
             Avoid using brand names, and focus on characteristics.
@@ -69,14 +74,16 @@ class seacrh_from_luxury_brands:
             model_name='gpt-3.5-turbo'
         )
 
-        system_prompt = (
-            "You are a search engine for clothing. "
-            "Use the following retrieved context to find clothing with a similar descriptions. "
-            "the question. If you don't know the answer, say that you. "
-            "Explain each of the 5 selected options of the context are the best ones in a consice matter."
-            "\n\n"
-            "{context}"
+        system_prompt = ( """
             
+            You are a search engine for clothing. 
+            Use the following retrieved context to find clothing with a similar descriptions.
+            
+            \n\n
+            Context: "{context}"
+            
+            If you don't know the answer, say that you.
+            """                         
         )
 
         prompt = ChatPromptTemplate.from_messages(
@@ -89,7 +96,17 @@ class seacrh_from_luxury_brands:
         question_answer_chain = create_stuff_documents_chain(turbo_llm, prompt)
         rag_chain = create_retrieval_chain(retriever, question_answer_chain)
 
-        query = f"""Find a similar description to this one: {description_generalization}"""
+        query = f"""
+            I have this peace of clothing: {description_generalization}
+
+            Answer ONLY THE FOLLOWING FORM, describing how the 5 pieces of clothing are similar to the one i have:
+            *Piece_1: Explanation
+            *Piece_2: Explanation
+            *Piece_3: Explanation
+            *Piece_4: Explanation
+            *Piece_5: Explanation
+            
+        """
 
         response = rag_chain.invoke({"input": description_generalization})
         
