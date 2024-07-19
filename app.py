@@ -42,18 +42,36 @@ def resize_image(image, new_width):
     return resized_image
 
 
-vectorstore = WCf.init_chroma_db()
+vectorstore = WCf.world_construction.init_chroma_db()
 
-# Screen 1: Gallery of cards
+
+#####################
+###   Fuctions!   ###
+#####################
+
+
+# when item is selected in Clothing Gallery
 selected_index = None
 for index, row in df.iterrows():
     if st.session_state.get(f"select_{index}", False):
         selected_index = index
 
-        entity = Sf.search_from_luxury_brands(df.loc[selected_index],vectorstore )
+        entity = Sf.search_from_luxury_brands.search_from_luxury_brands(df.loc[selected_index],vectorstore )
+        answer = entity.search_similarity_from_description()
+        
         break
 
+
+
+# UI
+
 if selected_index is None:
+
+    ##################################
+    ### Screen 1: Gallery of cards ###
+    ##################################
+
+
     st.title("Clothing Gallery")
 
     cols = st.columns(4)  # 4 cards per row
@@ -66,7 +84,11 @@ if selected_index is None:
             st.button("Select", key=f"select_{index}") 
 
 else:
-    # Show selected item information on the right
+
+    ##################################
+    ### Screen 2: Selected product ###
+    ##################################
+
     st.write("Selected Item:")
     st.write(f"Detail: {df.loc[selected_index, 'Detail']}")
     st.write(f"Summary: {df.loc[selected_index, 'Summary']}")

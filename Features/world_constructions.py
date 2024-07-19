@@ -1,15 +1,17 @@
 from DB_and_Azure.sql_db_functions import sql_db_functions as SQLf
 from DB_and_Azure import Chroma_db_functions as Cf
 
+import chromadb
+
 from langchain.vectorstores import Chroma
-from langchain.storage import InMemoryStore
-from langchain.schema.document import Document
-from langchain.retrievers.multi_vector import MultiVectorRetriever
+#from langchain.storage import InMemoryStore
+#from langchain.schema.document import Document
+#from langchain.retrievers.multi_vector import MultiVectorRetriever
 from langchain_community.embeddings.sentence_transformer import (
     SentenceTransformerEmbeddings,
 )
 
-import os
+#import os
 
 import pandas as pd
 
@@ -95,12 +97,17 @@ class world_construction:
 
     def init_chroma_db():
 
-        persist_directory = './Chroma/chroma-retail'
-        #os.path.join(os.path.dirname('__file__'), '..', 'Chroma','chroma-db-full-description')
+
+        client = chromadb.HttpClient(host='localhost',port=8000)
+        #collection = client.get_collection(name="multi_modal_rag")
+
         embedding = Cf.get_embeddings() 
 
         vectorstore = Chroma(
-            collection_name="multi_modal_rag", embedding_function=embedding,persist_directory = persist_directory)
+            client=client,
+            collection_name="multi_modal_rag",
+            embedding_function=embedding,
+        )    
         
         return vectorstore
     
