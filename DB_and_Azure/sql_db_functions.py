@@ -16,7 +16,7 @@ class sql_db_functions:
             'user': 'postgres',
             'password': 'secret',
             'host': 'localhost',
-            'port': '5433'
+            'port': '5432'
         }
         # Connect to the PostgreSQL server
         conn = psycopg2.connect(**conn_params)

@@ -11,6 +11,8 @@ from Features import search_from_luxury_brands as Sf
 
 df = WCf.world_construction.init_luxury_gallery()
 
+df_retail = WCf.world_construction.init_retail_gallery()
+
 
 def base64_to_image(base64_string):
     # Remove the data URI prefix if present
@@ -37,9 +39,36 @@ def resize_image(image, new_width):
     new_height = int(new_width * aspect_ratio)
 
     # Resize the image
-    resized_image = image.resize((new_width, new_height), Image.ANTIALIAS)
+    resized_image = image.resize((new_width, new_height))
 
     return resized_image
+
+def organize_data(answer):
+
+    page_content = []
+    metadata_1 = []
+    metadata_2 = []
+    doc_id =[]
+
+
+    for i in range(0,4):
+
+        doc_id.append(answer['context'][i].metadata['doc_id'])
+        page_content.append(answer['context'][i].page_content)
+        metadata_1.append(answer['context'][i].metadata['img_1'])
+        metadata_2.append(answer['context'][i].metadata['img_2'])
+
+    df_init = pd.DataFrame([doc_id,page_content,metadata_1,metadata_2]).T
+
+    df_init = pd.DataFrame(df_init)
+
+    df_init.rename(columns={0:"Id",1:"Summary",2:"Img_1",3:"Img_2"},inplace=True)
+
+
+    return df_init
+
+    
+
 
 
 vectorstore = WCf.world_construction.init_chroma_db()
@@ -56,9 +85,11 @@ for index, row in df.iterrows():
     if st.session_state.get(f"select_{index}", False):
         selected_index = index
 
-        entity = Sf.search_from_luxury_brands.search_from_luxury_brands(df.loc[selected_index],vectorstore )
+        #entity = Sf.search_similarity_from_description(df.loc[selected_index],vectorstore)
+        entity = Sf.seacrh_from_luxury_brands(description=df.loc[selected_index], vectorstore=vectorstore)
         answer = entity.search_similarity_from_description()
-        
+        df_recommendations = organize_data(answer=answer)
+
         break
 
 
@@ -80,30 +111,61 @@ if selected_index is None:
             st.image(
                 create_image_from_bytes(image_bytes=base64_to_image(row['base64'][-len(row['base64'])+1])),  
                 caption=row['Brand'])  # display the first image
+            st.write(f"Price: {row['Price']}")
         
             st.button("Select", key=f"select_{index}") 
 
-else:
 
     ##################################
     ### Screen 2: Selected product ###
     ##################################
 
-    st.write("Selected Item:")
-    st.write(f"Detail: {df.loc[selected_index, 'Detail']}")
-    st.write(f"Summary: {df.loc[selected_index, 'Summary']}")
-    st.write(f"Brand: {df.loc[selected_index, 'Brand']}")
-    #st.image(df.loc[selected_index, 'Images'][0])  # display the first image
+else:
 
-    # Show recommendation cards on the left
-    st.write("Recommendations:")
-    #for index, row in df_recommendations.iterrows():
-    #    st.write(f"Image: {row['Image']}")
-    #    st.write(f"Brand: {row['Brand']}")
-    #    st.write(f"Price: {row['Price']}")
+    col1, col2 = st.columns([3, 7])
 
-    # Exit button
-    st.button("Exit", key="exit")
-    if st.session_state.get("exit", False):
-        selected_index = None
-        st.write("Exiting...")
+    with col1:
+        st.write("Selected Item:")
+
+        st.image(
+            create_image_from_bytes(
+                image_bytes=base64_to_image(
+                    df.loc[selected_index, 'base64'][0]
+                )  # display the first image
+            )
+        )
+        st.write(f"Brand: {df.loc[selected_index, 'Brand']}")
+        st.write(f"Detail: {df.loc[selected_index, 'Detail']}")
+        st.write(f"Summary: {df.loc[selected_index, 'Summary']}")
+        
+        
+
+
+    with col2:
+        # Show recommendation cards on the left
+
+        st.write("Recommendations:")
+        for index, row in df_recommendations.iterrows():
+
+            col1_img, col2_img = st.columns([5, 5])
+
+            with col1_img:
+                st.image(
+                    resize_image(create_image_from_bytes(image_bytes=base64_to_image(row['Img_1'])),300)
+                )
+
+            with col2_img:
+                st.image(
+                    resize_image(create_image_from_bytes(image_bytes=base64_to_image(row['Img_2'])),300)
+                )
+
+            st.write(f"Brand: {df_retail[df_retail.Brand_id == int(row['Id']) ].Brand}")
+            st.write(f"Price: {df_retail[df_retail.Brand_id == int(row['Id']) ].Price}")
+            st.write(f"Summary: {row['Summary']}")
+            
+
+        # Exit button
+        st.button("Exit", key="exit")
+        if st.session_state.get("exit", False):
+            selected_index = None
+            st.write("Exiting...")

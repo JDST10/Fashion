@@ -8,6 +8,6 @@ FROM chromadb
 
 WORKDIR /chroma/chroma
 
-COPY ../../../Chromadb/chroma-retail /chroma/chroma
+COPY ../../Chromadb/chroma-retail /chroma/chroma
 
 

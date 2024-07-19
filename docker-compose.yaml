@@ -2,7 +2,7 @@ services:
   source_postgres:
     image: postgres:latest
     ports:
-      - "5433:5432"
+      - "5432:5432"
     networks:
       - fashion_network
     environment:
@@ -11,7 +11,6 @@ services:
       POSTGRES_PASSWORD: secret
     volumes:
       - ./source_db_init/init.sql:/docker-entrypoint-initdb.d/init.sql
-
 
   Chroma-db:
     image: chromadb/chroma:latest
@@ -22,7 +21,7 @@ services:
       - ALLOW_RESET=TRUE
       - ANONYMIZED_TELEMETRY=${ANONYMIZED_TELEMETRY:-TRUE}
     volumes:
-      - ../../../Chromadb/chroma-retail:/chroma/chroma
+      - ../../Chromadb/chroma-retail:/chroma/chroma
     networks:
       - fashion_network
 

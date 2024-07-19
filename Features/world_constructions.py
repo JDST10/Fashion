@@ -29,7 +29,7 @@ class world_construction:
             conn, cursor = SQLf.connect_sql()
 
             query = """
-                SELECT product_characteristics.id, Brand_id , Detail, Summary, Brand 
+                SELECT product_characteristics.id, Brand_id , Detail, Summary, Brand, Price 
                 FROM product_characteristics INNER JOIN Products ON product_characteristics.Brand_id = Products.Brand_Prod_id
                 WHERE Brand = 'Gucci' or Brand = 'Prada'
                 ;
@@ -39,7 +39,7 @@ class world_construction:
 
             SQLf.close_connection_db(conn=conn,cursor=cursor)
 
-            df = pd.DataFrame(rows, columns=['id', 'prod_id' , 'Detail', 'Summary', 'Brand'])
+            df = pd.DataFrame(rows, columns=['id', 'prod_id' , 'Detail', 'Summary', 'Brand', 'Price'])
 
             df['Detail'] = df['Detail'] = df['Detail'].str.replace('\n', ' / ').str.replace(r'\s+', ' ').str.replace('*', ' ')
 
@@ -75,9 +75,8 @@ class world_construction:
         try:
             conn, cursor = SQLf.connect_sql()
 
-   
             query = """
-                SELECT product_characteristics.id, Brand_id , Detail, Summary, Brand 
+                SELECT product_characteristics.id, Brand_id , Detail, Summary, Brand, Price
                 FROM product_characteristics INNER JOIN Products ON product_characteristics.Brand_id = Products.Brand_Prod_id
                 WHERE Brand = 'Mango' or Brand = 'HM' or Brand = 'GAP'
                 ;
@@ -87,7 +86,9 @@ class world_construction:
 
             SQLf.close_connection_db(conn=conn,cursor=cursor)
 
-            df = pd.DataFrame(rows, columns=[['id', 'Brand_id' , 'Detail', 'Summary', 'Brand']])
+            df = pd.DataFrame(rows, columns=['id', 'Brand_id' , 'Detail', 'Summary', 'Brand', 'Price'])
+
+            df['Detail'] = df['Detail'].str.replace('\n', ' / ').str.replace(r'\s+', ' ').str.replace('*', ' ')
 
             return df
 
