@@ -50,6 +50,7 @@ def organize_data(answer):
     metadata_2 = []
     doc_id =[]
 
+    answers = answer['answer'].replace('Piece_1: ','').replace('Piece_2: ','').replace('Piece_3: ','').replace('Piece_4: ','').replace('Piece_5: ','').replace('\n\n','').split('*')[1:]
 
     for i in range(0,4):
 
@@ -58,14 +59,16 @@ def organize_data(answer):
         metadata_1.append(answer['context'][i].metadata['img_1'])
         metadata_2.append(answer['context'][i].metadata['img_2'])
 
-    df_init = pd.DataFrame([doc_id,page_content,metadata_1,metadata_2]).T
+    df_init = pd.DataFrame([doc_id,answers, page_content,metadata_1,metadata_2]).T
 
     df_init = pd.DataFrame(df_init)
 
-    df_init.rename(columns={0:"Id",1:"Summary",2:"Img_1",3:"Img_2"},inplace=True)
+    df_init.rename(columns={0:"Id",1:"Answer",2:"Summary",3:"Img_1",4:"Img_2"},inplace=True)
 
 
     return df_init
+
+    
 
     
 
@@ -161,7 +164,7 @@ else:
 
             st.write(f"Brand: {df_retail[df_retail.Brand_id == int(row['Id']) ].Brand}")
             st.write(f"Price: {df_retail[df_retail.Brand_id == int(row['Id']) ].Price}")
-            st.write(f"Summary: {row['Summary']}")
+            st.write(f"Reccomendation: {row['Answer']}")
             
 
         # Exit button

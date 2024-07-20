@@ -70,19 +70,26 @@ class seacrh_from_luxury_brands:
         os.environ['OPENAI_API_KEY'] = apikey
 
         turbo_llm = ChatOpenAI(
-            temperature=0.2,
+            temperature=0.3,
             model_name='gpt-3.5-turbo'
         )
 
         system_prompt = ( """
             
-            You are a search engine for clothing. 
-            Use the following retrieved context to find clothing with a similar descriptions.
+            You are an enginee that suggest similar style clothing based on descriptions. 
+            Use the following retrieved context and the description of the clothing i have to generate the answer.
             
             \n\n
             Context: "{context}"
             
             If you don't know the answer, say that you.
+                         
+            ANSWER ONLY THE FOLLOWING FORM describing how the 5 pieces of clothing are similar to the one i have:
+            *Piece_1: Concise Explanation
+            *Piece_2: Concise Explanation
+            *Piece_3: Concise Explanation
+            *Piece_4: Concise Explanation
+            *Piece_5: Concise Explanation
             """                         
         )
 
@@ -96,19 +103,9 @@ class seacrh_from_luxury_brands:
         question_answer_chain = create_stuff_documents_chain(turbo_llm, prompt)
         rag_chain = create_retrieval_chain(retriever, question_answer_chain)
 
-        query = f"""
-            I have this peace of clothing: {description_generalization}
+        query = f""" I have this peace of clothing: {description_generalization}    """
 
-            Answer ONLY THE FOLLOWING FORM, describing how the 5 pieces of clothing are similar to the one i have:
-            *Piece_1: Explanation
-            *Piece_2: Explanation
-            *Piece_3: Explanation
-            *Piece_4: Explanation
-            *Piece_5: Explanation
-            
-        """
-
-        response = rag_chain.invoke({"input": description_generalization})
+        response = rag_chain.invoke({"input": query})
         
         return response#["answer"], response["context"]
 
