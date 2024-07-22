@@ -66,4 +66,18 @@ class sql_db_functions:
         cursor.close()
         conn.close()
 
+
+    def truncate_all_tables(conn, cursor,table):
+
+        query = f"""
+            TRUNCATE TABLE {table} RESTART IDENTITY CASCADE;
+            """
+        cursor.execute(query)
+
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+
     

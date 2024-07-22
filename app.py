@@ -9,10 +9,10 @@ from Features import world_constructions as WCf
 from Features import search_from_luxury_brands as Sf
 
 
-df = WCf.world_construction.init_luxury_gallery()
+#df = WCf.world_construction.init_luxury_gallery()
 
 df_retail = WCf.world_construction.init_retail_gallery()
-
+df = WCf.world_construction.init_retail_gallery()
 
 def base64_to_image(base64_string):
     # Remove the data URI prefix if present
@@ -91,8 +91,7 @@ for index, row in df.iterrows():
         #entity = Sf.search_similarity_from_description(df.loc[selected_index],vectorstore)
         entity = Sf.seacrh_from_luxury_brands(description=df.loc[selected_index], vectorstore=vectorstore)
         answer = entity.search_similarity_from_description()
-        df_recommendations = organize_data(answer=answer)
-
+        #df_recommendations = organize_data(answer=answer)
         break
 
 
@@ -125,7 +124,7 @@ if selected_index is None:
 
 else:
 
-    col1, col2 = st.columns([3, 7])
+    col1, col2 = st.columns([7, 3])
 
     with col1:
         st.write("Selected Item:")
@@ -148,6 +147,14 @@ else:
         # Show recommendation cards on the left
 
         st.write("Recommendations:")
+
+        # Exit button
+        st.button("Exit", key="exit")
+        if st.session_state.get("exit", False):
+            selected_index = None
+            st.write("Exiting...")
+
+'''
         for index, row in df_recommendations.iterrows():
 
             col1_img, col2_img = st.columns([5, 5])
@@ -166,9 +173,4 @@ else:
             st.write(f"Price: {df_retail[df_retail.Brand_id == int(row['Id']) ].Price}")
             st.write(f"Reccomendation: {row['Answer']}")
             
-
-        # Exit button
-        st.button("Exit", key="exit")
-        if st.session_state.get("exit", False):
-            selected_index = None
-            st.write("Exiting...")
+'''

@@ -70,13 +70,13 @@ class world_construction:
             print('error in luxury gallery SQL pull')
 
 
-
     def init_retail_gallery():
         try:
+
             conn, cursor = SQLf.connect_sql()
 
             query = """
-                SELECT product_characteristics.id, Brand_id , Detail, Summary, Brand, Price
+                SELECT product_characteristics.id, Brand_id , Detail, Summary, Brand, Price 
                 FROM product_characteristics INNER JOIN Products ON product_characteristics.Brand_id = Products.Brand_Prod_id
                 WHERE Brand = 'Mango' or Brand = 'HM' or Brand = 'GAP'
                 ;
@@ -86,14 +86,36 @@ class world_construction:
 
             SQLf.close_connection_db(conn=conn,cursor=cursor)
 
-            df = pd.DataFrame(rows, columns=['id', 'Brand_id' , 'Detail', 'Summary', 'Brand', 'Price'])
+            df = pd.DataFrame(rows, columns=['id', 'prod_id' , 'Detail', 'Summary', 'Brand', 'Price'])
 
-            df['Detail'] = df['Detail'].str.replace('\n', ' / ').str.replace(r'\s+', ' ').str.replace('*', ' ')
+            df['Detail'] = df['Detail'] = df['Detail'].str.replace('\n', ' / ').str.replace(r'\s+', ' ').str.replace('*', ' ')
+
+            df.prod_id = df.prod_id.astype(int)
+            df.prod_id.to_numpy
+
+            prod_ids = ",".join(df.prod_id.astype('string').tolist())
+
+            conn, cursor = SQLf.connect_sql()
+            query = f"SELECT Brand_id, base64 FROM product_img WHERE Brand_id in ({prod_ids}) ;"
+            cursor.execute(query)
+            rows_img = cursor.fetchall()
+
+            SQLf.close_connection_db(conn=conn,cursor=cursor)
+
+            
+            df_image = pd.DataFrame(rows_img, columns=['prod_id', 'base64']).dropna()
+
+            df_image = df_image.groupby('prod_id')['base64'].apply(list).reset_index()
+            
+            df = pd.merge(df,df_image, on='prod_id')
+
+        
 
             return df
 
         except:
-            print('error in retail gallery SQL pull')
+            print('error in luxury gallery SQL pull')
+
 
 
     def init_chroma_db():
