@@ -131,28 +131,12 @@ class world_construction:
 
         vectorstore = Chroma(
             client=client,
-            collection_name="multi_modal_rag",
+            collection_name="RAG-Parent",
             embedding_function=embedding,
         )    
         
         return vectorstore
     
-    def init_parent_document_retriever(vectorstore):
-
-        collection = vectorstore.get_collection('multi_modal_rag')
-
-        retriever = ParentDocumentRetriever(
-            vectorstore=vectorstore,
-            docstore=store,
-            child_splitter=child_splitter,
-        )
-
-        retriever.add_documents(collection)
-
-        return retriever
-
-
-        #return True
     
     
 
