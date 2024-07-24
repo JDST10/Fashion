@@ -7,9 +7,6 @@ import chromadb
 from langchain.retrievers import ParentDocumentRetriever
 
 from langchain.vectorstores import Chroma
-#from langchain.storage import InMemoryStore
-#from langchain.schema.document import Document
-#from langchain.retrievers.multi_vector import MultiVectorRetriever
 from langchain_community.embeddings.sentence_transformer import (
     SentenceTransformerEmbeddings,
 )
@@ -131,7 +128,7 @@ class world_construction:
 
         vectorstore = Chroma(
             client=client,
-            collection_name="RAG-Parent",
+            collection_name="RAG-Child",
             embedding_function=embedding,
         )    
         

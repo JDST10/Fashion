@@ -5,6 +5,9 @@ from langchain_core.prompts import ChatPromptTemplate
 
 from langchain_openai import ChatOpenAI
 
+from Features import similarity_search_retriever 
+
+import pandas as pd
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname('__file__'), '..', 'DB_and_Azure'))
@@ -21,68 +24,51 @@ class seacrh_from_luxury_brands:
         self.vectorstore = vectorstore
         #self.generalize_description = self.generate_description_generalization()
 
+    def sort_response(response,df_retail):
 
-    def generate_description_generalization(self):
+        r1 = response.content.replace('\n\n','').split('*')[1:]
 
-        description = self.description
+        df_r1 = pd.DataFrame(r1,columns=['explanation'])
+        df_r1.explanation = df_r1.explanation.apply(lambda x: x.replace('Piece_','').replace('1:','').replace('2:','').replace('3:','').replace('4:','').replace('5:',''))
 
-        prompt_text = f"""
-            use this description of a piece of clothing to create a new generalized description highlighting the most relevant aspects of it.
-            Focus on characteristics like: Fit, Sleeve style, Neckline, Material, Formality, Seasson, Colors, Texture, Transparency, Details and Embellishments, Shape,
-            Length, Collar Style, Sleeve Style, Patterns, Patterns placement, Fluidity of fabric, Fabric weight, Pocket Presence, Pocket placement, 
-            Pocket size, Breathability, Occasion Suitability, Lapel, etc.
+        df_r1 = df_r1.iloc[0:len(df_r1)].join(df_r1).rename(columns={'doc_id':'prod_id'})
 
-            Description: {description}
-
-            Avoid using brand names, and focus on characteristics.
-        """
-
-        os.environ['OPENAI_API_KEY'] = apikey
-
-        # LLM
-        model = ChatOpenAI(model="gpt-4o", temperature=0.7)
-
-        # Prompt template
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                ("system", "You are a fashion specialist."),
-                ("user", prompt_text),
-            ]
-        )
-
-        chain = prompt | model
-
-        response = chain.invoke({})
-
-        return response.content
+        df_r1 = df_r1[['prod_id','explanation']].merge(df_retail[['prod_id','Brand','Price','base64']], how= 'inner',on='prod_id')
+        
+        
+        return df_r1
 
 
-    # Functions !!
-    def search_similarity_from_description(self):
+    def search_similarity_from_description(self,df_retail):
 
+        
+        retriever = similarity_search_retriever.similarity_search_retriever(
+            description=self.description,
+            vectorestore=self.vectorstore
+            )
 
         #Setting up retriever
-        retriever = self.vectorstore.as_retriever(search_kwargs={"k": 5})
+        recommendations = retriever.similarity_search()
 
-        #Getting a generalization of the description
-        description_generalization = self.generate_description_generalization()
-    
-        os.environ['OPENAI_API_KEY'] = apikey
+        
+        piece_1 = df_retail[ df_retail.prod_id == recommendations.iloc[0].doc_id ]
+        piece_2 = df_retail[ df_retail.prod_id == recommendations.iloc[1].doc_id ]
+        piece_3 = df_retail[ df_retail.prod_id == recommendations.iloc[2].doc_id ]
+        piece_4 = df_retail[ df_retail.prod_id == recommendations.iloc[3].doc_id ]
+        piece_5 = df_retail[ df_retail.prod_id == recommendations.iloc[4].doc_id ]
 
-        turbo_llm = ChatOpenAI(
-            temperature=0.3,
-            model_name='gpt-3.5-turbo'
-        )
-
-        system_prompt = ( """
+        system_prompt = ( f"""
             
             You are an enginee that suggest similar style clothing based on descriptions. 
-            Use the following retrieved context and the description of the clothing i have to generate the answer.
+            Use the following retrieved context and the description of the clothing I have to generate the answer.
             
             \n\n
-            Context: "{context}"
-            
-            If you don't know the answer, say that you.
+            Context: 
+            Piece_1: {piece_1}
+            Piece_2: {piece_2}
+            Piece_3: {piece_3}
+            Piece_4: {piece_4}
+            Piece_5: {piece_5}
                          
             ANSWER ONLY THE FOLLOWING FORM describing how the 5 pieces of clothing are similar to the one i have:
             *Piece_1: Concise Explanation
@@ -100,13 +86,21 @@ class seacrh_from_luxury_brands:
             ]
         )
 
-        question_answer_chain = create_stuff_documents_chain(turbo_llm, prompt)
-        rag_chain = create_retrieval_chain(retriever, question_answer_chain)
+        os.environ['OPENAI_API_KEY'] = apikey
 
-        query = f""" I have this peace of clothing: {description_generalization}    """
+        turbo_llm = ChatOpenAI(
+            temperature=0.5,
+            model_name='gpt-4o-mini'
+        )
 
-        response = rag_chain.invoke({"input": query})
+        chain = prompt | turbo_llm
         
-        return response#["answer"], response["context"]
+        query = f""" I have this peace of clothing: {self.description}    """
+        
+        response = chain.invoke({"input":query})
+
+        returning_df = self.sort_response(response=response,df_retail=df_retail)
+        
+        return returning_df#["answer"], response["context"]
 
 

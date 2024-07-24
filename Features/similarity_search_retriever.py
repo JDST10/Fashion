@@ -12,7 +12,7 @@ class similarity_search_retriever:
         self.description = description
         self.vectorestore = vectorestore
 
-
+"""
     def __description_to_concepts(self):
 
         os.environ['OPENAI_API_KEY'] = apikey.apikey
@@ -87,11 +87,10 @@ class similarity_search_retriever:
         ranked_df['mean'] = -ranked_df['mean']
 
         ranked_df = ranked_df.sort_values(['count','mean'],ascending=False)
+
+        ranked_df.reset_index(drop=True,inplace=True)
+
+        return ranked_df 
         
-        final_df.merge(ranked_df, on='doc_id',how='inner')[['trim_content','doc_id','page_content']].head(6)
-
-
-        return final_df 
-        
-
+"""
     
