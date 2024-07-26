@@ -11,6 +11,7 @@ CREATE TABLE product_characteristics (
     id SERIAL PRIMARY KEY,
     Brand_id INTEGER REFERENCES Products(Brand_Prod_id),
     Detail TEXT,
+    Detail-unstructure TEXT,
     Summary Text,
     encoded boolean DEFAULT false
 );

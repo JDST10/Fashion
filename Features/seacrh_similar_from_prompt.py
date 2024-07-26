@@ -1,22 +1,24 @@
 ### lets set up the system
-from langchain.chains import create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_core.prompts import ChatPromptTemplate
+from Features import recommendation_process 
 
-from langchain_openai import ChatOpenAI
+class seacrh_from_luxury_brands:
+
+    def __init__(self, description,vectorstore):
+        self.description = description
+        self.vectorstore = vectorstore
+
+    def search_similarity_from_description(self,df_retail):
+
+        similarity_object = recommendation_process.recommendation_process(
+            description=self.description,
+            vectorestore=self.vectorstore
+            )
+        
+        returning_df = similarity_object.search_similarity_from_description(df_retail=df_retail)
+        
+        return returning_df
 
 
-import sys, os
-sys.path.append(os.path.join(os.path.dirname('__file__'), '..', 'DB_and_Azure'))
-#from apikey import apikey 
 
-apikey = 'sk-proj-OvVavmDwvsvUHryza7P7T3BlbkFJ9K11gPvYgUYrNbDFjUOd'
-
-
-
-class seacrh_similar_from_prompt:
-
-    def __init__(self):
-        pass
 
 

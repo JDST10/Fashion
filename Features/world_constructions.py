@@ -3,13 +3,12 @@ from DB_and_Azure import Chroma_db_functions as Cf
 
 import chromadb
 
-
-from langchain.retrievers import ParentDocumentRetriever
-
 from langchain.vectorstores import Chroma
 from langchain_community.embeddings.sentence_transformer import (
     SentenceTransformerEmbeddings,
 )
+
+from sentence_transformers import CrossEncoder
 
 #import os
 
@@ -133,6 +132,12 @@ class world_construction:
         )    
         
         return vectorstore
+    
+    def init_model_crossencoder():
+
+        model_crossencoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2', max_length=512)
+
+        return model_crossencoder
     
     
     

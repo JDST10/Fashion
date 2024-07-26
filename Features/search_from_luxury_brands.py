@@ -1,106 +1,22 @@
 ### lets set up the system
-from langchain.chains import create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_core.prompts import ChatPromptTemplate
-
-from langchain_openai import ChatOpenAI
-
-from Features import similarity_search_retriever 
-
-import pandas as pd
-
-import sys, os
-sys.path.append(os.path.join(os.path.dirname('__file__'), '..', 'DB_and_Azure'))
-#from apikey import apikey 
-
-apikey = 'sk-proj-OvVavmDwvsvUHryza7P7T3BlbkFJ9K11gPvYgUYrNbDFjUOd'
-
-
+from Features import recommendation_process 
 
 class seacrh_from_luxury_brands:
 
     def __init__(self, description,vectorstore):
         self.description = description
         self.vectorstore = vectorstore
-        #self.generalize_description = self.generate_description_generalization()
-
-    def sort_response(response,df_retail):
-
-        r1 = response.content.replace('\n\n','').split('*')[1:]
-
-        df_r1 = pd.DataFrame(r1,columns=['explanation'])
-        df_r1.explanation = df_r1.explanation.apply(lambda x: x.replace('Piece_','').replace('1:','').replace('2:','').replace('3:','').replace('4:','').replace('5:',''))
-
-        df_r1 = df_r1.iloc[0:len(df_r1)].join(df_r1).rename(columns={'doc_id':'prod_id'})
-
-        df_r1 = df_r1[['prod_id','explanation']].merge(df_retail[['prod_id','Brand','Price','base64']], how= 'inner',on='prod_id')
-        
-        
-        return df_r1
 
 
-    def search_similarity_from_description(self,df_retail):
+    def search_similarity_from_description(self,df_retail,model_crossencoder):
 
-        
-        retriever = similarity_search_retriever.similarity_search_retriever(
+        similarity_object = recommendation_process.recommendation_process(
             description=self.description,
-            vectorestore=self.vectorstore
+            vectorstore=self.vectorstore
             )
-
-        #Setting up retriever
-        recommendations = retriever.similarity_search()
-
         
-        piece_1 = df_retail[ df_retail.prod_id == recommendations.iloc[0].doc_id ]
-        piece_2 = df_retail[ df_retail.prod_id == recommendations.iloc[1].doc_id ]
-        piece_3 = df_retail[ df_retail.prod_id == recommendations.iloc[2].doc_id ]
-        piece_4 = df_retail[ df_retail.prod_id == recommendations.iloc[3].doc_id ]
-        piece_5 = df_retail[ df_retail.prod_id == recommendations.iloc[4].doc_id ]
-
-        system_prompt = ( f"""
-            
-            You are an enginee that suggest similar style clothing based on descriptions. 
-            Use the following retrieved context and the description of the clothing I have to generate the answer.
-            
-            \n\n
-            Context: 
-            Piece_1: {piece_1}
-            Piece_2: {piece_2}
-            Piece_3: {piece_3}
-            Piece_4: {piece_4}
-            Piece_5: {piece_5}
-                         
-            ANSWER ONLY THE FOLLOWING FORM describing how the 5 pieces of clothing are similar to the one i have:
-            *Piece_1: Concise Explanation
-            *Piece_2: Concise Explanation
-            *Piece_3: Concise Explanation
-            *Piece_4: Concise Explanation
-            *Piece_5: Concise Explanation
-            """                         
-        )
-
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                ("system", system_prompt),
-                ("human", "{input}"),
-            ]
-        )
-
-        os.environ['OPENAI_API_KEY'] = apikey
-
-        turbo_llm = ChatOpenAI(
-            temperature=0.5,
-            model_name='gpt-4o-mini'
-        )
-
-        chain = prompt | turbo_llm
+        returning_df = similarity_object.search_similarity_from_description(df_retail=df_retail,model_crossencoder=model_crossencoder)
         
-        query = f""" I have this peace of clothing: {self.description}    """
-        
-        response = chain.invoke({"input":query})
-
-        returning_df = self.sort_response(response=response,df_retail=df_retail)
-        
-        return returning_df#["answer"], response["context"]
+        return returning_df
 
 
