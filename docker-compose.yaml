@@ -1,10 +1,8 @@
-#version: '3'
-
 services:
   source_postgres:
     image: postgres:latest
     ports:
-      - "5433:5432"
+      - "5432:5432"
     networks:
       - fashion_network
     environment:
@@ -14,11 +12,20 @@ services:
     volumes:
       - ./source_db_init/init.sql:/docker-entrypoint-initdb.d/init.sql
 
+  Chroma-db:
+    image: chromadb/chroma:latest
+    ports:
+      - "8000:8000"
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ALLOW_RESET=TRUE
+      - ANONYMIZED_TELEMETRY=${ANONYMIZED_TELEMETRY:-TRUE}
+    volumes:
+      - ../../Chromadb/chroma-retail:/chroma/chroma
+    networks:
+      - fashion_network
 
 
 networks:
   fashion_network:
     driver: bridge
-
-    
-
