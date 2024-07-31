@@ -5,7 +5,7 @@ from Features import similarity_search_retriever
 import pandas as pd
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname('__file__'), '..', 'DB_and_Azure'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'DB_and_Azure'))
 #from apikey import apikey 
 
 apikey = 'sk-proj-OvVavmDwvsvUHryza7P7T3BlbkFJ9K11gPvYgUYrNbDFjUOd'

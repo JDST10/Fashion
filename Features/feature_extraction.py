@@ -1,5 +1,5 @@
 import sys, os
-sys.path.append(os.path.join(os.path.dirname('__file__'), '..', 'DB_and_Azure'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'DB_and_Azure'))
 from DB_and_Azure import sql_db_functions as SQLf, apikey
 
 import pandas as pd
