@@ -10,7 +10,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: secret
     volumes:
-      - ./source_db_init/init.sql:/docker-entrypoint-initdb.d/init.sql
+      #- ./source_db_init/init.sql:/docker-entrypoint-initdb.d/init.sql  # Initialization script
+      - b0ef9f1d38a613cf6c004fa993f329962e169d7217f8bb5165ecddb650080027:/var/lib/postgresql/data
 
   Chroma-db:
     image: chromadb/chroma:latest
@@ -29,3 +30,7 @@ services:
 networks:
   fashion_network:
     driver: bridge
+
+volumes:
+  b0ef9f1d38a613cf6c004fa993f329962e169d7217f8bb5165ecddb650080027:
+    external: true

@@ -11,7 +11,7 @@ CREATE TABLE product_characteristics (
     id SERIAL PRIMARY KEY,
     Brand_id INTEGER REFERENCES Products(Brand_Prod_id),
     Detail TEXT,
-    Detail-unstructure TEXT,
+    Detail_unstructure TEXT,
     Summary Text,
     encoded boolean DEFAULT false
 );
@@ -21,4 +21,11 @@ CREATE TABLE product_img (
     Brand_id INTEGER REFERENCES Products(Brand_Prod_id),
     image_link VARCHAR(500),
     base64 TEXT
+);
+
+CREATE TABLE clusters (
+    id SERIAL PRIMARY KEY,
+    Brand_id INTEGER REFERENCES Products(Brand_Prod_id),
+    cluster_no_brand int,
+    cluster_brand int
 );

@@ -61,11 +61,44 @@ class sql_db_functions:
             print("Error occurred:", e)
             print(f"Error details: {e.pgcode}, {e.pgerror}, {e.diag.message_primary}")
 
+
+    def load_clusters(conn, cursor, data):
+
+        try:
+            # Check if the DataFrame has the required columns
+            required_columns = ['Brand_id', 'cluster_no_brand', 'cluster_brand']
+            if not all(col in data.columns for col in required_columns):
+                raise ValueError("DataFrame is missing required columns")
+
+            # Create a list of tuples to hold the data
+            params = list(data[['Brand_id', 'cluster_no_brand', 'cluster_brand']].itertuples(index=False, name=None))
+
+            # Create the INSERT query
+            insert_query = """
+            INSERT INTO clusters (Brand_id, cluster_no_brand, cluster_brand)
+            VALUES (%s, %s, %s);
+            """
+
+            # Execute the query in bulk using executemany()
+            cursor.executemany(insert_query, params)
+
+            # Commit the transaction
+            conn.commit()
+            print("Data inserted successfully to clusters table")
+
+        except psycopg2.Error as e:
+            # Rollback the transaction in case of error
+            conn.rollback()
+            print("Error occurred:", e)
+            print(f"Error details: {e.pgcode}, {e.pgerror}, {e.diag.message_primary}")
+        except ValueError as e:
+            print("Error:", e)
+
+
     def close_connection_db(cursor,conn):
         #Close the cursor and connection to clean up
         cursor.close()
         conn.close()
-
 
     def truncate_all_tables(conn, cursor,table):
 
