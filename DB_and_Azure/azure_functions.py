@@ -10,7 +10,7 @@ class azure_functions:
     def connect_blob():
         try:
             account_name = 'fashionblobstorage'
-            account_key = 'ZjPPzXD1yE+D1E3YQTDvi6ZQmB8NJINlaQeiuokjW1XQbmB/8JxS/OfZp8Bd/8M4UikJvV1a+7jg+ASt5+J8Mg=='
+            account_key = ''
             container_name ='imgs'
 
             connect_str = 'DefaultEndpointsProtocol=https;AccountName='+account_name+';AccountKey='+account_key+';EndpointSuffix=core.windows.net'
